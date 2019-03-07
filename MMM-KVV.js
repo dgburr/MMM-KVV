@@ -32,23 +32,37 @@ Module.register("MMM-KVV", {
         return ["MMM-KVV.css"];
     },
 
-    start: function () {
-		var self = this;
-        Log.info("Starting module: " + this.name);
+    mainLoop: function () {
+        var self = this;
         this.sendSocketNotification("CONFIG", this.config);
-		setInterval(
-			function()
-			{self.sendSocketNotification("CONFIG", self.config);}
-			,this.config.reload);
+        this.interval = setInterval(
+            function() {
+                self.sendSocketNotification("CONFIG", self.config);
+            }, this.config.reload);
     },
 
-		
+    start: function () {
+        Log.info("Starting module: " + this.name);
+        this.mainLoop();
+    },
+
     socketNotificationReceived: function (notification, payload) {
 		if (notification === "TRAMS" + this.config.stopID) {
 			this.kvv_data = payload;
 			this.config.stopName = payload.stopName;
 			this.updateDom();			
 	    }
+	},
+
+	notificationReceived: function(notification, payload) {
+		if (notification == "MMM-KVV_CONFIG") {
+			// stop main loop
+			clearInterval(this.interval);
+			// update with new parameters
+			for (var attr in payload) this.config[attr] = payload[attr];
+			// restart main loop
+			this.mainLoop();
+		}
 	},
 
     getDom: function () {

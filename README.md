@@ -86,6 +86,32 @@ Sample configuration entry for your `~/MagicMirror/config/config.js` with option
 | labelRow<BR>`optional` | true | <BR> Show or hide column headers<BR> <EM>Possible values: true, false</EM><P> |
 | reload<BR>`optional`  | 60000 | <BR> How often should the information be updated? (In milliseconds) <BR><EM> Default: Every minute </EM><P> |
 
+## Notification Events
+The MMM-KVV module supports the notification event `MMM-KVV_CONFIG` which allows the configuration to be dynamically modified.  As an example, the MMM-OnScreenMenu module might be used to dynamically adjust the `direction` parameter as follows:
+
+    {
+        module: "MMM-OnScreenMenu",
+        position: "top_left",
+        config: {
+            menuItems: {
+                notify1: {
+                    title: "Show Inbound",
+                    notification: "MMM-KVV_CONFIG",
+                    payload: {
+                        direction: "2",
+                    }
+                },
+                notify2: {
+                    title: "Show Outbound",
+                    notification: "MMM-KVV_CONFIG",
+                    payload: {
+                        direction: "1",
+                    }
+                }
+            }
+        }
+    }
+
 ## Licence
 MIT License
 
